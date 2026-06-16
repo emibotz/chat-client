@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://b2ew1wujwyiil"]
+
+[ext_resource type="Script" uid="uid://decwiblfhojw5" path="res://src/Entity/Player/Player.cs" id="1_o3s7f"]
+[ext_resource type="Texture2D" uid="uid://cw1xe6x6et1wd" path="res://assets/circle.svg" id="2_5o33p"]
+
+[node name="Player" type="Node2D" unique_id=1897208684]
+script = ExtResource("1_o3s7f")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=394218766]
+texture = ExtResource("2_5o33p")
+
+[node name="Label" type="Label" parent="." unique_id=1696165305]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -0.5
+offset_top = -64.0
+offset_right = 0.5
+offset_bottom = -41.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Name"
+horizontal_alignment = 1
