@@ -1,4 +1,6 @@
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Chat.Client.V1;
 using Chat.Game.V1;
@@ -7,7 +9,7 @@ using Godot;
 public partial class LocalPlayerController(
     IEventDispatcher eventDispatcher,
     IRequestSender requestSender
-) : Node, IPlayerController
+) : Node, IPlayerController, IEventSubscriber
 {
 
     public Player Player { get; set; }
@@ -47,13 +49,26 @@ public partial class LocalPlayerController(
 
     }
 
+    EventSubscriptions IEventSubscriber.Subscriptions()
+    {
+        return
+        [
+            new EventSubscription<ServerTickEvent>(OnServerTick),
+        ];
+    }
 
     // 节点方法 //
 
     public override void _Ready()
     {
         // 订阅服务器刻事件
-        _eventDispatcher.Subscribe<ServerTickEvent>(OnServerTick);
+        _eventDispatcher?.Subscribe(this);
+    }
+
+    public override void _ExitTree()
+    {
+        // 取消订阅
+        _eventDispatcher?.Unsubscribe(this);
     }
 
     public override void _Process(double delta)

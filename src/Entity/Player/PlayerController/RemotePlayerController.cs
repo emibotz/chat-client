@@ -4,7 +4,7 @@ using Godot;
 
 public partial class RemotePlayerController(
     IEventDispatcher eventDispatcher
-) : Node, IPlayerController
+) : Node, IPlayerController, IEventSubscriber
 {
 
     public Player Player { get; set; }
@@ -12,7 +12,7 @@ public partial class RemotePlayerController(
     private Tween _tween = null;
 
     // 事件分发器
-    private IEventDispatcher _eventDispatcher = eventDispatcher;
+    private readonly IEventDispatcher _eventDispatcher = eventDispatcher;
 
     // 事件处理 //
 
@@ -47,15 +47,28 @@ public partial class RemotePlayerController(
         return false;
     }
 
+    EventSubscriptions IEventSubscriber.Subscriptions()
+    {
+        return [
+            new EventSubscription<ServerTickEvent>(OnServerTick),
+        ];
+    }
+
     // 节点方法 //
 
     public override void _Ready()
     {
         // 订阅服务器刻事件
-        _eventDispatcher.Subscribe<ServerTickEvent>(OnServerTick);
+        _eventDispatcher?.Subscribe(this);
 
         // 创建 Tween 对象
         _tween = CreateTween();
+    }
+
+    public override void _ExitTree()
+    {
+        // 取消订阅
+        _eventDispatcher?.Unsubscribe(this);
     }
 
     public override void _Process(double delta)

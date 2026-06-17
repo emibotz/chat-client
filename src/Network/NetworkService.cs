@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
@@ -16,6 +17,8 @@ using Google.Protobuf;
 /// </summary>
 public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
 {
+
+    private readonly Queue<Event> _events = [];
 
     // 网络相关实现 //
 
@@ -53,7 +56,7 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
             }
 
             // 解析 Protobuf 对象
-            var serverEvent = ServerEvent.Parser.ParseFrom(buffer, 0, result.Count);
+            var serverEvent = Chat.Server.V1.ServerEvent.Parser.ParseFrom(buffer, 0, result.Count);
 
             // 将 Protobuf 对象转换成事件对象
             Event e = null;
@@ -61,28 +64,27 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
             switch (serverEvent.DataCase)
             {
 
-                case ServerEvent.DataOneofCase.None:
+                case Chat.Server.V1.ServerEvent.DataOneofCase.None:
                     {
                         GD.Print("Received empty server event!");
-                        e = new Event(serverEvent.Version);
                         break;
                     }
 
-                case ServerEvent.DataOneofCase.Error:
+                case Chat.Server.V1.ServerEvent.DataOneofCase.Error:
                     {
                         var error = serverEvent.Error;
                         e = new ErrorEvent(serverEvent.Version, error.Code, error.Error);
                         break;
                     }
 
-                case ServerEvent.DataOneofCase.Rooms:
+                case Chat.Server.V1.ServerEvent.DataOneofCase.Rooms:
                     {
                         var rooms = serverEvent.Rooms.Rooms.Select((room) => new RoomsEvent.RoomInfo(room.Num, room.Name, room.Owner, room.UserCount, room.MaxUserCount)).ToList();
                         e = new RoomsEvent(serverEvent.Version, rooms);
                         break;
                     }
 
-                case ServerEvent.DataOneofCase.RoomJoined:
+                case Chat.Server.V1.ServerEvent.DataOneofCase.RoomJoined:
                     {
                         var roomJoined = serverEvent.RoomJoined;
                         var owner = new UserInfo(roomJoined.Owner.Id, roomJoined.Owner.Name);
@@ -91,21 +93,21 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
                         break;
                     }
 
-                case ServerEvent.DataOneofCase.RoomLeft:
+                case Chat.Server.V1.ServerEvent.DataOneofCase.RoomLeft:
                     {
                         e = new RoomLeftEvent(serverEvent.Version);
                         break;
                     }
 
-                case ServerEvent.DataOneofCase.RoomUserJoined:
+                case Chat.Server.V1.ServerEvent.DataOneofCase.RoomUserJoined:
                     {
                         var userJoined = serverEvent.RoomUserJoined;
                         var userInfo = new UserInfo(userJoined.User.Id, userJoined.User.Name);
-                        e = new UserJoinedRoomEvent(serverEvent.Version, userInfo);
+                        e = new UserJoinRoomEvent(serverEvent.Version, userInfo);
                         break;
                     }
 
-                case ServerEvent.DataOneofCase.RoomUserLeft:
+                case Chat.Server.V1.ServerEvent.DataOneofCase.RoomUserLeft:
                     {
                         var userLeft = serverEvent.RoomUserLeft;
                         var userInfo = new UserInfo(userLeft.User.Id, userLeft.User.Name);
@@ -113,19 +115,19 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
                         break;
                     }
 
-                case ServerEvent.DataOneofCase.RoomGameStarted:
+                case Chat.Server.V1.ServerEvent.DataOneofCase.RoomGameStarted:
                     {
                         e = new GameStartEvent(serverEvent.Version);
                         break;
                     }
 
-                case ServerEvent.DataOneofCase.RoomGameStopped:
+                case Chat.Server.V1.ServerEvent.DataOneofCase.RoomGameStopped:
                     {
                         e = new GameStopEvent(serverEvent.Version);
                         break;
                     }
 
-                case ServerEvent.DataOneofCase.ServerTick:
+                case Chat.Server.V1.ServerEvent.DataOneofCase.ServerTick:
                     {
                         var serverTick = serverEvent.ServerTick;
                         var players = serverTick.Players.Select((player) => new ServerTickEvent.PlayerState(player.Id, player.Name, player.X, player.Y)).ToList();
@@ -197,6 +199,7 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
         _cts = new();
         _client = new();
 
+        _client.Options.CollectHttpResponseDetails = true;
         _client.Options.SetRequestHeader("Authorization", "Bearer " + token);
 
         try
@@ -206,62 +209,146 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
         }
         catch (Exception)
         {
-            GD.PrintErr("连接失败。");
+            GD.PrintErr("连接失败。 Code: ", _client.HttpStatusCode);
             await ClearConnection();
         }
+
+        _events.Enqueue(new ConnectEvent());
 
     }
 
     // 事件分发器实现 //
 
-    private readonly Queue<Event> _events = [];
-
     private readonly Dictionary<Type, List<EventSubscription>> _subs = [];
+    private readonly Dictionary<IEventSubscriber, List<EventSubscription>> _subscribers = [];
 
-    public void Subscribe<T>(EventSubscription<T> sub) where T : Event
+    /// <summary>
+    /// 添加订阅项的内部实现，已加锁。
+    /// </summary>
+    private void AddSubscription(EventSubscription sub, IEventSubscriber subscriber)
     {
+        var t = sub.EventType;
 
         lock (_subs)
         {
-            var type = typeof(T);
-            var ok = _subs.TryGetValue(type, out var list);
+            var ok = _subs.TryGetValue(t, out var subs);
 
             if (!ok)
             {
-                list = [];
-                _subs[type] = list;
+                subs = [];
+                _subs[t] = subs;
             }
 
-            if (!list.Contains(sub))
+            if (!subs.Contains(sub))
             {
-                GD.Print("debug: sub.");
-                list.Add(sub);
+                subs.Add(sub);
+            }
+        }
+
+        // 添加订阅者
+        if (subscriber == null)
+        {
+            return;
+        }
+
+        lock (_subscribers)
+        {
+            var ok = _subscribers.TryGetValue(subscriber, out var subscriberSubs);
+
+            if (!ok)
+            {
+                subscriberSubs = [];
+                _subscribers[subscriber] = subscriberSubs;
+            }
+
+            if (!subscriberSubs.Contains(sub))
+            {
+                subscriberSubs.Add(sub);
             }
         }
 
     }
 
-    public void Subscribe<T>(EventCallback<T> callback) where T : Event
+    private void RemoveSubscription(EventSubscription sub, IEventSubscriber subscriber)
     {
-        Subscribe(new EventSubscription<T>(callback));
-    }
-
-    public void Unsubscribe<T>(EventSubscription<T> sub) where T : Event
-    {
+        var t = sub.EventType;
 
         lock (_subs)
         {
-            var type = typeof(T);
-            var ok = _subs.TryGetValue(type, out var list);
+            var ok = _subs.TryGetValue(t, out var subs);
 
             if (!ok)
             {
                 return;
             }
 
-            list.Remove(sub);
+            subs.Remove(sub);
         }
 
+        if (subscriber == null)
+        {
+            return;
+        }
+
+        lock (_subscribers)
+        {
+            var ok = _subscribers.TryGetValue(subscriber, out var subscriberSubs);
+
+            if (!ok)
+            {
+                return;
+            }
+
+            subscriberSubs.Remove(sub);
+        }
+
+    }
+
+    public void Subscribe<T>(EventSubscription<T> sub, IEventSubscriber subscriber = null) where T : Event
+    {
+        var type = typeof(T);
+        AddSubscription(sub, subscriber);
+    }
+
+    public void Subscribe(IEventSubscriber subscriber)
+    {
+        var subs = subscriber.Subscriptions();
+
+        foreach (var sub in subs)
+        {
+            if (!sub.EventType.IsAssignableTo(typeof(Event)))
+            {
+                continue;
+            }
+
+            AddSubscription(sub, subscriber);
+        }
+    }
+
+    public void Unsubscribe<T>(EventSubscription<T> sub, IEventSubscriber subscriber = null) where T : Event
+    {
+        var type = typeof(T);
+        RemoveSubscription(sub, subscriber);
+    }
+
+    public void Unsubscribe(IEventSubscriber subscriber)
+    {
+        var ok = _subscribers.TryGetValue(subscriber, out var subs);
+
+        if (!ok)
+        {
+            return;
+        }
+
+        foreach (var sub in subs)
+        {
+            RemoveSubscription(sub, subscriber);
+        }
+
+        lock (_subscribers)
+        {
+            _subscribers.Remove(subscriber);
+        }
     }
 
     public void Dispatch<T>(T e) where T : Event
@@ -272,12 +359,12 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
         lock (_subs)
         {
             var ok = _subs.TryGetValue(typeof(T), out var temp);
-            list = [.. temp];
-        }
+            if (temp == null)
+            {
+                return;
+            }
 
-        if (list == null)
-        {
-            return;
+            list = [.. temp];
         }
 
         foreach (var sub in list)
@@ -307,6 +394,7 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
             return;
         }
 
+        request.Version = ApiVersion.Version;
         _ = SendAsync(request.ToByteArray());
     }
 
@@ -319,7 +407,7 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
         {
             while (_events.TryDequeue(out var e))
             {
-                Dispatch(e);
+                e.DispatchTo(this);
             }
         }
     }
@@ -331,7 +419,7 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
         {
             while (_events.TryDequeue(out var e))
             {
-                Dispatch(e);
+                e.DispatchTo(this);
             }
         }
     }
