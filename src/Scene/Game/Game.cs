@@ -4,6 +4,8 @@ using System;
 public partial class Game : Scene, IEventSubscriber
 {
 
+    private bool _started;
+
     // 场景节点 //
 
     private RoomMenu _roomMenu;
@@ -66,6 +68,7 @@ public partial class Game : Scene, IEventSubscriber
     {
         _roomMenu.Show();
         _gameMachine.Hide();
+        _started = false;
         return false;
     }
 
@@ -73,6 +76,7 @@ public partial class Game : Scene, IEventSubscriber
     {
         _roomMenu.Hide();
         _gameMachine.Show();
+        _started = true;
         return false;
     }
 
@@ -109,6 +113,18 @@ public partial class Game : Scene, IEventSubscriber
     {
         // 取消订阅
         _eventDispatcher?.Unsubscribe(this);
+    }
+
+    public override void _Input(InputEvent e)
+    {
+        if (e.IsActionPressed("exit"))
+        {
+            if (_started)
+            {
+                _roomMenu.Visible = !_roomMenu.Visible;
+                _gameMachine.Visible = !_gameMachine.Visible;
+            }
+        }
     }
 
 }
