@@ -100,5 +100,11 @@ public partial class GameMachine : Node2D, IEventSubscriber
         _playerScene = GD.Load("res://entity/Player/Player.tscn") as PackedScene;
     }
 
+    public override void _ExitTree()
+    {
+        // 取消订阅
+        _eventDispatcher.Unsubscribe(this);
+    }
+
 
 }
