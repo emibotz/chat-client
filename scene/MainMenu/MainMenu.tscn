@@ -24,7 +24,6 @@ layout_mode = 2
 size_flags_vertical = 3
 focus_neighbor_bottom = NodePath("../LoginPanel/Username")
 focus_next = NodePath("../LoginPanel/Username")
-text = "localhost:5678"
 placeholder_text = "服务器地址"
 
 [node name="Spacer" type="Control" parent="ConnectionPanel" unique_id=958014656]
@@ -44,7 +43,6 @@ focus_neighbor_top = NodePath("../../Address")
 focus_neighbor_bottom = NodePath("../Password")
 focus_next = NodePath("../Password")
 focus_previous = NodePath("../../Address")
-text = "emi23"
 placeholder_text = "用户名"
 
 [node name="Password" type="LineEdit" parent="ConnectionPanel/LoginPanel" unique_id=247401331]
@@ -54,7 +52,6 @@ focus_neighbor_top = NodePath("../Username")
 focus_neighbor_bottom = NodePath("../LoginOrRegister/LoginButton")
 focus_next = NodePath("../LoginOrRegister/LoginButton")
 focus_previous = NodePath("../Username")
-text = "emibotzpassword"
 placeholder_text = "密码"
 secret = true
 
