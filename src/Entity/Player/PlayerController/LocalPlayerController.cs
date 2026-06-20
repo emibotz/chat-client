@@ -9,10 +9,9 @@ using Godot;
 public partial class LocalPlayerController(
     IEventDispatcher eventDispatcher,
     IRequestSender requestSender
-) : Node, IPlayerController, IEventSubscriber
-{
 
-    public Player Player { get; set; }
+) : PlayerController, IEventSubscriber
+{
 
     // 事件分发器
     private readonly IEventDispatcher _eventDispatcher = eventDispatcher;
@@ -26,7 +25,7 @@ public partial class LocalPlayerController(
     {
 
         // 寻找当前玩家的状态数据
-        var state = e.Players.First((player) => player.Id == Player.PlayerID.ToString());
+        var state = e.Players.FirstOrDefault((player) => player.Id == Player.PlayerId, null);
 
         // 如果没有当前玩家的状态数据
         if (state == null)
@@ -39,7 +38,7 @@ public partial class LocalPlayerController(
 
         // 如果本地玩家位置和远程玩家位置距离
         // 过远，调整本地玩家位置
-        if (Player.Position.DistanceTo(position) > 1.0)
+        if (Player.Position.DistanceTo(position) > 50.0)
         {
             GD.Print("Fix player position, distance is ", Player.Position.DistanceTo(position));
             Player.Position = position;

@@ -1,0 +1,237 @@
+[gd_scene format=3 uid="uid://bc34j18jr2uln"]
+
+[ext_resource type="Script" uid="uid://d1rh01827qvty" path="res://src/Scene/MainMenu/ConnectionPanel/ConnectionPanel.cs" id="1_6836v"]
+[ext_resource type="Script" uid="uid://8l7q1qswypf" path="res://src/Scene/MainMenu/MainMenu.cs" id="1_vrhe7"]
+[ext_resource type="Script" uid="uid://u6srn8rbxdj" path="res://src/Scene/MainMenu/ConnectionPanel/LoginPanel.cs" id="2_isrph"]
+[ext_resource type="Script" uid="uid://xcu67qs4kq71" path="res://src/Scene/MainMenu/ConnectionPanel/RegisterPanel.cs" id="3_e8klu"]
+[ext_resource type="Script" uid="uid://c1vt2gv315qmo" path="res://src/Scene/MainMenu/RoomListPanel/RoomListPanel.cs" id="5_mqxa8"]
+
+[node name="MainMenu" type="Node" unique_id=220049701]
+script = ExtResource("1_vrhe7")
+
+[node name="ConnectionPanel" type="VBoxContainer" parent="." unique_id=925017770]
+anchors_preset = -1
+anchor_left = 0.25
+anchor_top = 0.2
+anchor_right = 0.75
+anchor_bottom = 0.7
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6836v")
+
+[node name="Address" type="LineEdit" parent="ConnectionPanel" unique_id=2112920492]
+layout_mode = 2
+size_flags_vertical = 3
+focus_neighbor_bottom = NodePath("../LoginPanel/Username")
+focus_next = NodePath("../LoginPanel/Username")
+text = "localhost:5678"
+placeholder_text = "服务器地址"
+
+[node name="Spacer" type="Control" parent="ConnectionPanel" unique_id=958014656]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LoginPanel" type="VBoxContainer" parent="ConnectionPanel" unique_id=1114823683]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 4.0
+script = ExtResource("2_isrph")
+
+[node name="Username" type="LineEdit" parent="ConnectionPanel/LoginPanel" unique_id=1016007517]
+layout_mode = 2
+size_flags_vertical = 3
+focus_neighbor_top = NodePath("../../Address")
+focus_neighbor_bottom = NodePath("../Password")
+focus_next = NodePath("../Password")
+focus_previous = NodePath("../../Address")
+text = "emi23"
+placeholder_text = "用户名"
+
+[node name="Password" type="LineEdit" parent="ConnectionPanel/LoginPanel" unique_id=247401331]
+layout_mode = 2
+size_flags_vertical = 3
+focus_neighbor_top = NodePath("../Username")
+focus_neighbor_bottom = NodePath("../LoginOrRegister/LoginButton")
+focus_next = NodePath("../LoginOrRegister/LoginButton")
+focus_previous = NodePath("../Username")
+text = "emibotzpassword"
+placeholder_text = "密码"
+secret = true
+
+[node name="Spacer" type="Control" parent="ConnectionPanel/LoginPanel" unique_id=1969653074]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LoginOrRegister" type="HBoxContainer" parent="ConnectionPanel/LoginPanel" unique_id=427093805]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LoginButton" type="Button" parent="ConnectionPanel/LoginPanel/LoginOrRegister" unique_id=2140590648]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_neighbor_top = NodePath("../../Password")
+focus_neighbor_right = NodePath("../GoRegisterButton")
+focus_next = NodePath("../../../Address")
+focus_previous = NodePath("../../Password")
+text = "登录
+"
+
+[node name="GoRegisterButton" type="Button" parent="ConnectionPanel/LoginPanel/LoginOrRegister" unique_id=1379279446]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../LoginButton")
+focus_neighbor_top = NodePath("../../Password")
+focus_next = NodePath("../../../Address")
+focus_previous = NodePath("../LoginButton")
+text = "前往注册"
+
+[node name="RegisterPanel" type="VBoxContainer" parent="ConnectionPanel" unique_id=345347517]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 4.0
+script = ExtResource("3_e8klu")
+
+[node name="Username" type="LineEdit" parent="ConnectionPanel/RegisterPanel" unique_id=1767129138]
+layout_mode = 2
+size_flags_vertical = 3
+focus_neighbor_top = NodePath("../../Address")
+focus_neighbor_bottom = NodePath("../../LoginPanel/Password")
+focus_next = NodePath("../../LoginPanel/Password")
+focus_previous = NodePath("../../Address")
+placeholder_text = "用户名"
+
+[node name="Password" type="LineEdit" parent="ConnectionPanel/RegisterPanel" unique_id=1620998437]
+layout_mode = 2
+size_flags_vertical = 3
+focus_neighbor_top = NodePath("../Username")
+focus_neighbor_bottom = NodePath("../Password2")
+focus_next = NodePath("../Password2")
+focus_previous = NodePath("../Username")
+placeholder_text = "密码"
+secret = true
+
+[node name="Password2" type="LineEdit" parent="ConnectionPanel/RegisterPanel" unique_id=2114021876]
+layout_mode = 2
+size_flags_vertical = 3
+focus_neighbor_top = NodePath("../Password")
+focus_neighbor_bottom = NodePath("../LoginOrRegister/RegisterButton")
+focus_next = NodePath("../LoginOrRegister/RegisterButton")
+focus_previous = NodePath("../Password")
+placeholder_text = "重复密码"
+secret = true
+
+[node name="Spacer" type="Control" parent="ConnectionPanel/RegisterPanel" unique_id=2146110690]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LoginOrRegister" type="HBoxContainer" parent="ConnectionPanel/RegisterPanel" unique_id=876806207]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RegisterButton" type="Button" parent="ConnectionPanel/RegisterPanel/LoginOrRegister" unique_id=359961554]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_neighbor_top = NodePath("../../Password2")
+focus_neighbor_right = NodePath("../GoLoginButton")
+focus_next = NodePath("../GoLoginButton")
+focus_previous = NodePath("../../Password2")
+text = "注册"
+
+[node name="GoLoginButton" type="Button" parent="ConnectionPanel/RegisterPanel/LoginOrRegister" unique_id=1963983484]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../RegisterButton")
+focus_neighbor_top = NodePath("../../Password2")
+focus_next = NodePath("../../../Address")
+focus_previous = NodePath("../RegisterButton")
+text = "前往登录"
+
+[node name="RoomListPanel" type="VBoxContainer" parent="." unique_id=1050941445]
+visible = false
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_mqxa8")
+
+[node name="RoomList" type="Tree" parent="RoomListPanel" unique_id=1308553889]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 4
+column_titles_visible = true
+hide_folding = true
+hide_root = true
+select_mode = 1
+
+[node name="BottomPanel" type="Panel" parent="RoomListPanel" unique_id=1405632533]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.2
+
+[node name="RefreshButton" type="Button" parent="RoomListPanel/BottomPanel" unique_id=568608456]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.3
+anchor_right = 0.15
+anchor_bottom = 0.7
+offset_top = -1.335144e-05
+offset_right = -1.5258789e-05
+offset_bottom = -1.1444092e-05
+grow_horizontal = 2
+grow_vertical = 2
+text = "刷新"
+
+[node name="JoinButton" type="Button" parent="RoomListPanel/BottomPanel" unique_id=2076869076]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 0.3
+anchor_right = 0.3
+anchor_bottom = 0.7
+offset_left = -1.5258789e-05
+offset_top = -1.335144e-05
+offset_right = -3.0517578e-05
+offset_bottom = -1.1444092e-05
+grow_horizontal = 2
+grow_vertical = 2
+text = "加入"
+
+[node name="RoomName" type="LineEdit" parent="RoomListPanel/BottomPanel" unique_id=2135394262]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.3
+anchor_right = 0.75
+anchor_bottom = 0.7
+grow_horizontal = 2
+grow_vertical = 2
+placeholder_text = "房间名"
+
+[node name="CreateButton" type="Button" parent="RoomListPanel/BottomPanel" unique_id=1050915356]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.8
+anchor_top = 0.3
+anchor_right = 0.95
+anchor_bottom = 0.7
+offset_top = -1.335144e-05
+offset_bottom = -1.1444092e-05
+grow_horizontal = 2
+grow_vertical = 2
+text = "创建"
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1460951111]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)

@@ -4,36 +4,24 @@ using Godot;
 
 public partial class RemotePlayerController(
     IEventDispatcher eventDispatcher
-) : Node, IPlayerController, IEventSubscriber
+) : PlayerController, IEventSubscriber
 {
 
-    public Player Player { get; set; }
-
-    private Tween _tween = null;
+    private float _progress;
+    private float _targetProgress;
+    private Vector2 _lastPosition;
+    private Vector2 _targetPosition;
 
     // 事件分发器
     private readonly IEventDispatcher _eventDispatcher = eventDispatcher;
 
     // 事件处理 //
 
-    private void UpdatePosition(Vector2 position)
-    {
-
-        if (_tween == null)
-        {
-            return;
-        }
-
-        _tween.Stop();
-        _tween.TweenProperty(Player, Node2D.PropertyName.Position.ToString(), position, 1.0 / 60.0);
-    }
-
     private bool OnServerTick(EventSubscription s, ServerTickEvent e)
     {
         // 寻找当前玩家的数据
-        var state = e.Players.First((player) => player.Id == Player.PlayerID.ToString());
+        var state = e.Players.FirstOrDefault((player) => player.Id == Player.PlayerId, null);
 
-        // [TODO]
         // 如果没有当前玩家的数据，应该删除这个玩家！
         if (state == null)
         {
@@ -41,8 +29,10 @@ public partial class RemotePlayerController(
         }
 
         // 更新玩家位置
-        var position = new Vector2((float)state.X, (float)state.Y);
-        CallDeferred(MethodName.UpdatePosition, position);
+        _progress = 0.0f;
+        _targetProgress = (float)(1.0 / 60.0);
+        _lastPosition = Player.Position;
+        _targetPosition = new Vector2((float)state.X, (float)state.Y);
 
         return false;
     }
@@ -60,9 +50,6 @@ public partial class RemotePlayerController(
     {
         // 订阅服务器刻事件
         _eventDispatcher?.Subscribe(this);
-
-        // 创建 Tween 对象
-        _tween = CreateTween();
     }
 
     public override void _ExitTree()
@@ -73,6 +60,17 @@ public partial class RemotePlayerController(
 
     public override void _Process(double delta)
     {
-        // [TODO]
+        if (_targetProgress == 0.0f)
+        {
+            return;
+        }
+
+        _progress += (float)delta;
+        if (_progress > _targetProgress)
+        {
+            _progress = _targetProgress;
+        }
+
+        Player.Position = _lastPosition.Lerp(_targetPosition, _progress / _targetProgress);
     }
 }

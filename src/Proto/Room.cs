@@ -24,17 +24,17 @@ namespace Chat.Client.V1 {
     static RoomReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChljaGF0L2NsaWVudC92MS9yb29tLnByb3RvEg5jaGF0LmNsaWVudC52MSIM",
-            "CgpDcmVhdGVSb29tIgoKCEdldFJvb21zIhwKCEpvaW5Sb29tEhAKA251bRgB",
-            "IAEoA1IDbnVtIgsKCUxlYXZlUm9vbSIPCg1Sb29tU3RhcnRHYW1lIg4KDFJv",
-            "b21TdG9wR2FtZUKCAQoSY29tLmNoYXQuY2xpZW50LnYxQglSb29tUHJvdG9Q",
-            "AVoHLi9wcm90b6ICA0NDWKoCDkNoYXQuQ2xpZW50LlYxygIOQ2hhdFxDbGll",
-            "bnRcVjHiAhpDaGF0XENsaWVudFxWMVxHUEJNZXRhZGF0YeoCEENoYXQ6OkNs",
-            "aWVudDo6VjFiCGVkaXRpb25zcOgH"));
+            "ChljaGF0L2NsaWVudC92MS9yb29tLnByb3RvEg5jaGF0LmNsaWVudC52MSIg",
+            "CgpDcmVhdGVSb29tEhIKBG5hbWUYASABKAlSBG5hbWUiCgoIR2V0Um9vbXMi",
+            "HAoISm9pblJvb20SEAoDbnVtGAEgASgDUgNudW0iCwoJTGVhdmVSb29tIg8K",
+            "DVJvb21TdGFydEdhbWUiDgoMUm9vbVN0b3BHYW1lQoIBChJjb20uY2hhdC5j",
+            "bGllbnQudjFCCVJvb21Qcm90b1ABWgcuL3Byb3RvogIDQ0NYqgIOQ2hhdC5D",
+            "bGllbnQuVjHKAg5DaGF0XENsaWVudFxWMeICGkNoYXRcQ2xpZW50XFYxXEdQ",
+            "Qk1ldGFkYXRh6gIQQ2hhdDo6Q2xpZW50OjpWMWIIZWRpdGlvbnNw6Ac="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Chat.Client.V1.CreateRoom), global::Chat.Client.V1.CreateRoom.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Chat.Client.V1.CreateRoom), global::Chat.Client.V1.CreateRoom.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Chat.Client.V1.GetRooms), global::Chat.Client.V1.GetRooms.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Chat.Client.V1.JoinRoom), global::Chat.Client.V1.JoinRoom.Parser, new[]{ "Num" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Chat.Client.V1.LeaveRoom), global::Chat.Client.V1.LeaveRoom.Parser, null, null, null, null, null),
@@ -81,6 +81,7 @@ namespace Chat.Client.V1 {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public CreateRoom(CreateRoom other) : this() {
+      name_ = other.name_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -88,6 +89,32 @@ namespace Chat.Client.V1 {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public CreateRoom Clone() {
       return new CreateRoom(this);
+    }
+
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private readonly static string NameDefaultValue = "";
+
+    private string name_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Name {
+      get { return name_ ?? NameDefaultValue; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+    /// <summary>Gets whether the "name" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool HasName {
+      get { return name_ != null; }
+    }
+    /// <summary>Clears the value of the "name" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void ClearName() {
+      name_ = null;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -105,6 +132,7 @@ namespace Chat.Client.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (Name != other.Name) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -112,6 +140,7 @@ namespace Chat.Client.V1 {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (HasName) hash ^= Name.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -130,6 +159,10 @@ namespace Chat.Client.V1 {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
+      if (HasName) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -140,6 +173,10 @@ namespace Chat.Client.V1 {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (HasName) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -150,6 +187,9 @@ namespace Chat.Client.V1 {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (HasName) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -161,6 +201,9 @@ namespace Chat.Client.V1 {
     public void MergeFrom(CreateRoom other) {
       if (other == null) {
         return;
+      }
+      if (other.HasName) {
+        Name = other.Name;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -181,6 +224,10 @@ namespace Chat.Client.V1 {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
         }
       }
     #endif
@@ -200,6 +247,10 @@ namespace Chat.Client.V1 {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
         }
       }
     }

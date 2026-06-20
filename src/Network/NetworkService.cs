@@ -87,8 +87,8 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
                 case Chat.Server.V1.ServerEvent.DataOneofCase.RoomJoined:
                     {
                         var roomJoined = serverEvent.RoomJoined;
-                        var owner = new UserInfo(roomJoined.Owner.Id, roomJoined.Owner.Name);
-                        var users = roomJoined.Users.Select((user) => new UserInfo(user.Id, user.Name)).ToList();
+                        var owner = new UserInfo(Guid.Parse(roomJoined.Owner.Id), roomJoined.Owner.Name);
+                        var users = roomJoined.Users.Select((user) => new UserInfo(Guid.Parse(user.Id), user.Name)).ToList();
                         e = new RoomJoinedEvent(serverEvent.Version, roomJoined.Num, roomJoined.Name, owner, users);
                         break;
                     }
@@ -102,7 +102,7 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
                 case Chat.Server.V1.ServerEvent.DataOneofCase.RoomUserJoined:
                     {
                         var userJoined = serverEvent.RoomUserJoined;
-                        var userInfo = new UserInfo(userJoined.User.Id, userJoined.User.Name);
+                        var userInfo = new UserInfo(Guid.Parse(userJoined.User.Id), userJoined.User.Name);
                         e = new UserJoinRoomEvent(serverEvent.Version, userInfo);
                         break;
                     }
@@ -110,14 +110,14 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
                 case Chat.Server.V1.ServerEvent.DataOneofCase.RoomUserLeft:
                     {
                         var userLeft = serverEvent.RoomUserLeft;
-                        var userInfo = new UserInfo(userLeft.User.Id, userLeft.User.Name);
+                        var userInfo = new UserInfo(Guid.Parse(userLeft.User.Id), userLeft.User.Name);
                         e = new UserLeftRoomEvent(serverEvent.Version, userInfo);
                         break;
                     }
 
                 case Chat.Server.V1.ServerEvent.DataOneofCase.RoomGameStarted:
                     {
-                        e = new GameStartEvent(serverEvent.Version);
+                        e = new GameStartEvent(serverEvent.Version, Guid.Parse(serverEvent.RoomGameStarted.PlayerId));
                         break;
                     }
 
@@ -130,8 +130,8 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
                 case Chat.Server.V1.ServerEvent.DataOneofCase.ServerTick:
                     {
                         var serverTick = serverEvent.ServerTick;
-                        var players = serverTick.Players.Select((player) => new ServerTickEvent.PlayerState(player.Id, player.Name, player.X, player.Y)).ToList();
-                        var messages = serverTick.Messages.Select((message) => new ServerTickEvent.ChatMessage(message.SenderId, message.Message)).ToList();
+                        var players = serverTick.Players.Select((player) => new ServerTickEvent.PlayerState(Guid.Parse(player.Id), player.Name, player.X, player.Y)).ToList();
+                        var messages = serverTick.Messages.Select((message) => new ServerTickEvent.ChatMessage(Guid.Parse(message.SenderId), message.Message)).ToList();
                         e = new ServerTickEvent(serverEvent.Version, players, messages);
                         break;
                     }
@@ -333,11 +333,18 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
 
     public void Unsubscribe(IEventSubscriber subscriber)
     {
-        var ok = _subscribers.TryGetValue(subscriber, out var subs);
+        var subs = new List<EventSubscription>();
 
-        if (!ok)
+        lock (_subscribers)
         {
-            return;
+            var ok = _subscribers.TryGetValue(subscriber, out var temp);
+
+            if (!ok)
+            {
+                return;
+            }
+
+            subs = [.. temp];
         }
 
         foreach (var sub in subs)
@@ -353,6 +360,8 @@ public partial class NetworkService() : Node, IRequestSender, IEventDispatcher
 
     public void Dispatch<T>(T e) where T : Event
     {
+
+        // GD.Print("Dispatch ", typeof(T).Name);
 
         List<EventSubscription> list = null;
 

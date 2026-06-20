@@ -24,20 +24,21 @@ namespace Chat.Game.V1 {
     static ServerReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChljaGF0L2dhbWUvdjEvc2VydmVyLnByb3RvEgxjaGF0LmdhbWUudjEiTQoL",
+            "ChljaGF0L2dhbWUvdjEvc2VydmVyLnByb3RvEgxjaGF0LmdhbWUudjEiZgoL",
             "UGxheWVyU3RhdGUSDgoCaWQYASABKAlSAmlkEhIKBG5hbWUYAiABKAlSBG5h",
-            "bWUSDAoBeBgDIAEoAVIBeBIMCgF5GAQgASgBUgF5IkQKC0NoYXRNZXNzYWdl",
-            "EhsKCXNlbmRlcl9pZBgBIAEoCVIIc2VuZGVySWQSGAoHbWVzc2FnZRgCIAEo",
-            "CVIHbWVzc2FnZSJ4CgpTZXJ2ZXJUaWNrEjMKB3BsYXllcnMYASADKAsyGS5j",
-            "aGF0LmdhbWUudjEuUGxheWVyU3RhdGVSB3BsYXllcnMSNQoIbWVzc2FnZXMY",
-            "AiADKAsyGS5jaGF0LmdhbWUudjEuQ2hhdE1lc3NhZ2VSCG1lc3NhZ2VzQnoK",
-            "EGNvbS5jaGF0LmdhbWUudjFCC1NlcnZlclByb3RvUAFaBy4vcHJvdG+iAgND",
-            "R1iqAgxDaGF0LkdhbWUuVjHKAgxDaGF0XEdhbWVcVjHiAhhDaGF0XEdhbWVc",
-            "VjFcR1BCTWV0YWRhdGHqAg5DaGF0OjpHYW1lOjpWMWIIZWRpdGlvbnNw6Ac="));
+            "bWUSFwoHdXNlcl9pZBgDIAEoCVIGdXNlcklkEgwKAXgYBCABKAFSAXgSDAoB",
+            "eRgFIAEoAVIBeSJECgtDaGF0TWVzc2FnZRIbCglzZW5kZXJfaWQYASABKAlS",
+            "CHNlbmRlcklkEhgKB21lc3NhZ2UYAiABKAlSB21lc3NhZ2UieAoKU2VydmVy",
+            "VGljaxIzCgdwbGF5ZXJzGAEgAygLMhkuY2hhdC5nYW1lLnYxLlBsYXllclN0",
+            "YXRlUgdwbGF5ZXJzEjUKCG1lc3NhZ2VzGAIgAygLMhkuY2hhdC5nYW1lLnYx",
+            "LkNoYXRNZXNzYWdlUghtZXNzYWdlc0J6ChBjb20uY2hhdC5nYW1lLnYxQgtT",
+            "ZXJ2ZXJQcm90b1ABWgcuL3Byb3RvogIDQ0dYqgIMQ2hhdC5HYW1lLlYxygIM",
+            "Q2hhdFxHYW1lXFYx4gIYQ2hhdFxHYW1lXFYxXEdQQk1ldGFkYXRh6gIOQ2hh",
+            "dDo6R2FtZTo6VjFiCGVkaXRpb25zcOgH"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Chat.Game.V1.PlayerState), global::Chat.Game.V1.PlayerState.Parser, new[]{ "Id", "Name", "X", "Y" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Chat.Game.V1.PlayerState), global::Chat.Game.V1.PlayerState.Parser, new[]{ "Id", "Name", "UserId", "X", "Y" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Chat.Game.V1.ChatMessage), global::Chat.Game.V1.ChatMessage.Parser, new[]{ "SenderId", "Message" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Chat.Game.V1.ServerTick), global::Chat.Game.V1.ServerTick.Parser, new[]{ "Players", "Messages" }, null, null, null, null)
           }));
@@ -85,6 +86,7 @@ namespace Chat.Game.V1 {
       _hasBits0 = other._hasBits0;
       id_ = other.id_;
       name_ = other.name_;
+      userId_ = other.userId_;
       x_ = other.x_;
       y_ = other.y_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -148,8 +150,34 @@ namespace Chat.Game.V1 {
       name_ = null;
     }
 
+    /// <summary>Field number for the "user_id" field.</summary>
+    public const int UserIdFieldNumber = 3;
+    private readonly static string UserIdDefaultValue = "";
+
+    private string userId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string UserId {
+      get { return userId_ ?? UserIdDefaultValue; }
+      set {
+        userId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+    /// <summary>Gets whether the "user_id" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool HasUserId {
+      get { return userId_ != null; }
+    }
+    /// <summary>Clears the value of the "user_id" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void ClearUserId() {
+      userId_ = null;
+    }
+
     /// <summary>Field number for the "x" field.</summary>
-    public const int XFieldNumber = 3;
+    public const int XFieldNumber = 4;
     private readonly static double XDefaultValue = 0D;
 
     private double x_;
@@ -176,7 +204,7 @@ namespace Chat.Game.V1 {
     }
 
     /// <summary>Field number for the "y" field.</summary>
-    public const int YFieldNumber = 4;
+    public const int YFieldNumber = 5;
     private readonly static double YDefaultValue = 0D;
 
     private double y_;
@@ -219,6 +247,7 @@ namespace Chat.Game.V1 {
       }
       if (Id != other.Id) return false;
       if (Name != other.Name) return false;
+      if (UserId != other.UserId) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(X, other.X)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Y, other.Y)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -230,6 +259,7 @@ namespace Chat.Game.V1 {
       int hash = 1;
       if (HasId) hash ^= Id.GetHashCode();
       if (HasName) hash ^= Name.GetHashCode();
+      if (HasUserId) hash ^= UserId.GetHashCode();
       if (HasX) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(X);
       if (HasY) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Y);
       if (_unknownFields != null) {
@@ -258,12 +288,16 @@ namespace Chat.Game.V1 {
         output.WriteRawTag(18);
         output.WriteString(Name);
       }
+      if (HasUserId) {
+        output.WriteRawTag(26);
+        output.WriteString(UserId);
+      }
       if (HasX) {
-        output.WriteRawTag(25);
+        output.WriteRawTag(33);
         output.WriteDouble(X);
       }
       if (HasY) {
-        output.WriteRawTag(33);
+        output.WriteRawTag(41);
         output.WriteDouble(Y);
       }
       if (_unknownFields != null) {
@@ -284,12 +318,16 @@ namespace Chat.Game.V1 {
         output.WriteRawTag(18);
         output.WriteString(Name);
       }
+      if (HasUserId) {
+        output.WriteRawTag(26);
+        output.WriteString(UserId);
+      }
       if (HasX) {
-        output.WriteRawTag(25);
+        output.WriteRawTag(33);
         output.WriteDouble(X);
       }
       if (HasY) {
-        output.WriteRawTag(33);
+        output.WriteRawTag(41);
         output.WriteDouble(Y);
       }
       if (_unknownFields != null) {
@@ -307,6 +345,9 @@ namespace Chat.Game.V1 {
       }
       if (HasName) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      if (HasUserId) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(UserId);
       }
       if (HasX) {
         size += 1 + 8;
@@ -331,6 +372,9 @@ namespace Chat.Game.V1 {
       }
       if (other.HasName) {
         Name = other.Name;
+      }
+      if (other.HasUserId) {
+        UserId = other.UserId;
       }
       if (other.HasX) {
         X = other.X;
@@ -365,11 +409,15 @@ namespace Chat.Game.V1 {
             Name = input.ReadString();
             break;
           }
-          case 25: {
-            X = input.ReadDouble();
+          case 26: {
+            UserId = input.ReadString();
             break;
           }
           case 33: {
+            X = input.ReadDouble();
+            break;
+          }
+          case 41: {
             Y = input.ReadDouble();
             break;
           }
@@ -400,11 +448,15 @@ namespace Chat.Game.V1 {
             Name = input.ReadString();
             break;
           }
-          case 25: {
-            X = input.ReadDouble();
+          case 26: {
+            UserId = input.ReadString();
             break;
           }
           case 33: {
+            X = input.ReadDouble();
+            break;
+          }
+          case 41: {
             Y = input.ReadDouble();
             break;
           }

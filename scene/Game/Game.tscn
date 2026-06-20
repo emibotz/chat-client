@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://dkc45b7mxcs3n"]
+
+[ext_resource type="Script" uid="uid://dbsc1mb2pfdlq" path="res://src/Scene/Game/Game.cs" id="1_p7xw7"]
+[ext_resource type="Script" uid="uid://cusvpn1e280ph" path="res://src/Scene/Game/RoomMenu/RoomMenu.cs" id="2_ugm23"]
+[ext_resource type="Script" uid="uid://0ytlpxm8ncwq" path="res://src/Scene/Game/GameMachine.cs" id="3_ugm23"]
+
+[node name="Game" type="Node" unique_id=1284458226]
+script = ExtResource("1_p7xw7")
+
+[node name="RoomMenu" type="VBoxContainer" parent="." unique_id=137257648]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_ugm23")
+
+[node name="UserList" type="Tree" parent="RoomMenu" unique_id=1560277045]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 7.0
+columns = 2
+column_titles_visible = true
+hide_root = true
+
+[node name="RoomPanel" type="Panel" parent="RoomMenu" unique_id=1865162806]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RoomInfo" type="Label" parent="RoomMenu/RoomPanel" unique_id=1124465997]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.2
+anchor_right = 0.15
+anchor_bottom = 0.7
+grow_horizontal = 2
+grow_vertical = 2
+text = "房间号：000001
+房间名：测试房间名"
+
+[node name="LeaveButton" type="Button" parent="RoomMenu/RoomPanel" unique_id=16522732]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.85
+anchor_top = 0.3
+anchor_right = 0.95
+anchor_bottom = 0.7
+grow_horizontal = 2
+grow_vertical = 2
+text = "离开"
+
+[node name="StartButton" type="Button" parent="RoomMenu/RoomPanel" unique_id=923245737]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.7
+anchor_top = 0.3
+anchor_right = 0.8
+anchor_bottom = 0.7
+grow_horizontal = 2
+grow_vertical = 2
+text = "开始"
+
+[node name="GameMachine" type="Node2D" parent="." unique_id=298555919]
+visible = false
+script = ExtResource("3_ugm23")

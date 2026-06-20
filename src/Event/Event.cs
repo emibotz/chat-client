@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-/// <returns>事件是否已被处理，或是否打断事件处理流程？</returns>
+/// <returns>是否打断事件处理过程</returns>
 public delegate bool EventCallback<T>(EventSubscription<T> sub, T e) where T : Event;
 
 public abstract class EventSubscription
